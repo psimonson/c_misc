@@ -1,0 +1,11 @@
+===================================================
+= Program: pread.c - Processes word data          =
+===================================================
+
+Write a program to process word data from pfile.c
+and to process anagrams, come up with many words.
+Given the word list file, processed by pfile.c.
+Should arbitrarily find words from file using the
+search word you have typed in to the program.
+
+-5n4k3
