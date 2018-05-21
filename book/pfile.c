@@ -1,5 +1,5 @@
-#include "my-c-headerlibs/common/helper.h"
-#include "my-c-headerlibs/common/tempfile.h"
+#include "common/helper.h"
+#include "common/tempfile.h"
 
 #define MAXLEN    256
 #define MAXCHARS  26
