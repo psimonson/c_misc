@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define YYSTYPE char*
 extern int yylineno;
 extern char *yytext;
+static int return_code = 0;
 
 void yyerror(const char *msg)
 {
@@ -31,7 +31,7 @@ void write_skeleton()
 	fprintf(out, ".text\n");
 	fprintf(out, "\t.global _start\n");
 	fprintf(out, "_start:\n");
-	fprintf(out, "\tmovl $0, %%ebx\n");
+	fprintf(out, "\tmovl $%d, %%ebx\n", return_code);
 	fprintf(out, "\tmovl $1, %%eax\n");
 	fprintf(out, "\tint $0x80\n");
 	fclose(out);
@@ -56,7 +56,7 @@ function:
 	;
 
 expression:
-	/* empty */ | RETURN NUMBER ';'
+	RETURN NUMBER ';' { return_code = $2; }
 	;
 %%
 

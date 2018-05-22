@@ -17,7 +17,7 @@ extern int yylineno;
 "("		{ return '('; }
 ")"		{ return ')'; }
 ";"		{ return ';'; }
-[0-9]+		{ return NUMBER; }
+[0-9]+		{ yylval=atoi(yytext); return NUMBER; }
 "return"	{ return RETURN; }
 
 "int"		{ return TYPE; }
