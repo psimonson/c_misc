@@ -24,5 +24,5 @@ $(TARGET): $(OBJECTS) $(OBJECTS2)
 	@$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 clean:
-	@echo rm -f *~ $(OBJECTS2) grammer.tab.c grammer.tab.h lex.yy.c $(OBJECTS) $(TARGET)
-	@rm -f *~ $(OBJECTS2) grammer.tab.c grammer.tab.h lex.yy.c $(OBJECTS) $(TARGET)
+	@echo rm -f *~ out.s $(OBJECTS2) grammer.tab.c grammer.tab.h lex.yy.c $(OBJECTS) $(TARGET)
+	@rm -f *~ out.s $(OBJECTS2) grammer.tab.c grammer.tab.h lex.yy.c $(OBJECTS) $(TARGET)

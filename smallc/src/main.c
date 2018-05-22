@@ -1,19 +1,21 @@
 #include "common/helper.h"
 
+extern FILE *yyin;
 extern int yyparse();
 extern int yyerror(const char *);
-extern int yylex();
-extern int yylineno;
 
-int main()
+int main(int argc, char **argv)
 {
-	int result;
-
-	result = yyparse();
-	if (!result)
-		printf("The input is valid!\n");
+	if (argc > 1)
+		if ((yyin = fopen(*++argv, "rb")) == NULL) {
+			fprintf(stderr, "File: %s open error.\n", *argv);
+			return 1;
+		}
 	else
-		printf("The input is not valid!\n");
-	printf("Lines in input file are: %d\n", yylineno);
-	return result;
+		yyin = stdin;
+
+	yyparse();
+	write_skeleton();
+	printf("Written out.s\n");
+	return 0;
 }
