@@ -1,20 +1,38 @@
-%option noyywrap
 %{
-	#include "grammer.tab.h"
+#include <stdio.h>
+#include "grammer.tab.h"
+void comment();
+extern int yylineno;
 %}
 
-name		[a-zA-Z]([0-9]*[a-zA-Z]*)+
-whitespace	[ \r\t\v\f]
-linefeed	\n
 
 %%
-{name}		{ return NAME; }
-":"		{ return COLON; }
-";"		{ return SEMICOLON; }
-"->"		{ return RIGHT_ARROW; }
-"{"		{ return LEFT_BRACE; }
-"}"		{ return RIGHT_BRACE; }
-{whitespace}
-{linefeed}	++yylineno;
+\n		{ ++yylineno; }
+
+"/*"		{ comment(); }
+[ \t\n]+	{ /* discard whitespace */ }
+
+"{"		{ return OPEN_BRACE; }
+"}"		{ return CLOSE_BRACE; }
+"("		{ return '('; }
+")"		{ return ')'; }
+";"		{ return ';'; }
+[0-9]+		{ return NUMBER; }
+"return"	{ return RETURN; }
+
+"int"		{ return TYPE; }
+"main"		{ return IDENTIFIER; }
+
+"#include"	{ return INCLUDE; }
+"<"[a-z.]+">"	{ return HEADER_NAME; }
 %%
-#include <stdio.h>
+
+void comment()
+{
+	int c, prev = 0;
+
+	while ((c = input()) != EOF)
+		if (c == '*' && prev == '/')
+			return;
+	yyerror("unterminated comment");
+}
