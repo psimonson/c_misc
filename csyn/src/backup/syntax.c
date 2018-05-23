@@ -1,14 +1,15 @@
 #include "common/helper.h"
+#include "stack.h"
 
 #define STATE_QUOTE   0
 #define STATE_COMMENT 1
 #define STATE_CODE    2
 
-#define MAXSTACK      256
+#define MAXLINE       1024
 
-static int state = STATE_CODE;
-static int stack[MAXSTACK];
-static int stackp = 0;
+int state = STATE_CODE;
+char text[MAXLINE];
+int lines;
 
 /* search:  search for characters; changing state */
 int search(c)
@@ -16,50 +17,43 @@ int search(c)
 {
 	extern int getch();
 	extern void ungetch(int);
+	extern void push(int, char*);
+	static int i = 0;
 
+	text[i++] = c;
 	switch (c) {
 		case '/':
 			c = getch();
 			if (c == '*')
-				return STATE_COMMENT;
+				state = STATE_COMMENT;
 			else
 				ungetch(c);
 			break;
 		case '*':
 			c = getch();
 			if (c == '/')
-				return STATE_CODE;
+				state = STATE_CODE;
 			else
 				ungetch(c);
 			break;
 		case '"':
 		case '\'':
-			return STATE_QUOTE;
+			state = STATE_QUOTE;
+			break;
+		case EOF:
+			state = EOF;
+			break;
+		case '\n':
+			++lines;
+			text[i] = '\0';
+			push(lines, text);
+			i = 0;
+			state = STATE_CODE;
 			break;
 		default:
-			return STATE_CODE;
+			state = STATE_CODE;
+			break;
 	}
 
-	return -1;
-}
-
-/* getch(), ungetch():  used for search function */
-
-#define MAXBUFLEN 100
-
-static char getchbuf[MAXBUFLEN];
-static int getchbufp = 0;
-
-int getch()
-{
-	return (getchbufp > 0) ? getchbuf[--getchbufp] : getchar();
-}
-
-void ungetch(c)
-	int c;
-{
-	if (getchbufp >= MAXBUFLEN)
-		printf("ungetch: too many characters\n");
-	else
-		getchbuf[getchbufp++] = c;
+	return state;
 }

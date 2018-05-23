@@ -8,8 +8,8 @@
 #define MAXLINE       1024
 
 int state = STATE_CODE;
-struct stack mystack[MAXSTACK];
-int lines = 0;
+char text[MAXLINE];
+int lines;
 
 /* search:  search for characters; changing state */
 int search(c)
@@ -19,7 +19,6 @@ int search(c)
 	extern void ungetch(int);
 	extern void push(int, char*);
 	static int i = 0;
-	static char text[MAXLINE];
 
 	text[i++] = c;
 	switch (c) {
@@ -45,8 +44,9 @@ int search(c)
 			state = EOF;
 			break;
 		case '\n':
+			++lines;
 			text[i] = '\0';
-			push(++lines, text);
+			push(lines, text);
 			i = 0;
 			state = STATE_CODE;
 			break;

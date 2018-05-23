@@ -4,7 +4,7 @@ LDFLAGS?=
 
 SOURCES:=$(wildcard *.c)
 OBJECTS:=$(SOURCES:.c=.o)
-TARGET=hello
+TARGET=csyntax
 
 .PHONY: all clean
 all: $(TARGET)
