@@ -4,7 +4,7 @@
 #include "grammer.tab.h"
 
 extern int yylineno;
-extern void yyerror(const char*, ...);
+extern void yyerror(const char*);
 void comment();
 %}
 
@@ -32,9 +32,11 @@ void comment();
 %%
 
 #define INPUT_EOF 0
+#define MAXLEN 256
 
 void comment()
 {
+	char msg[MAXLEN];
 	int c, prev = 0;
 
 	while ((c = input()) != INPUT_EOF) {
@@ -42,5 +44,6 @@ void comment()
 			return;
 		prev = c;
 	}
-	yyerror("Unterminated comment, line %d.\n", yylineno);
+	sprintf(msg, "Unterminated comment, line %d.\n", yylineno);
+	yyerror(msg);
 }

@@ -12,12 +12,9 @@ int yywrap(void)
 	return 1;
 }
 
-void yyerror(const char *msg, ...)
+void yyerror(const char *msg)
 {
-	va_list ap;
-	va_start(ap, msg);
-	vfprintf(stderr, msg, ap);
-	va_end(ap);
+	fprintf(stderr, "%s: %s at line %d.\n", msg, yytext, yylineno);
 	exit(1);
 }
 %}
@@ -45,7 +42,11 @@ function:
 	;
 
 expression:
-	RETURN NUMBER SEMI_COLON
+	/* empty */ | expressions expression
+	;
+
+expressions:
+	SEMI_COLON | IDENTIFIER OPEN_PAREN CLOSE_PAREN SEMI_COLON | RETURN NUMBER SEMI_COLON
 	;
 
 %%

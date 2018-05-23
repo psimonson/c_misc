@@ -1,0 +1,8 @@
+#include <stdio.h>
+
+/* hello world program */
+int main()
+{
+	printf(); /* soon will be working */
+	return 0; /* already works */
+}
