@@ -3,13 +3,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-extern int yylineno;
 extern char *yytext;
+extern int yylval;
 static int return_code = 0;
 
 void yyerror(const char *msg)
 {
-	fprintf(stderr, "%s at line %d, %s\n", msg, yylineno, yytext);
+	fprintf(stderr, "%s at line %d, %s\n", msg, yylval, yytext);
 	exit(1);
 }
 
@@ -39,7 +39,7 @@ void write_skeleton()
 %}
 
 %token INCLUDE HEADER_NAME
-%token TYPE IDENTIFIER RETURN NUMBER
+%token TYPE IDENTIFIER RETURN NUMBER PARAMETER
 %token OPEN_BRACE CLOSE_BRACE
 
 %%
@@ -52,7 +52,15 @@ header:
 	;
 
 function:
-	TYPE IDENTIFIER '(' ')' OPEN_BRACE expression CLOSE_BRACE
+	TYPE IDENTIFIER '(' parameters ')' OPEN_BRACE expression CLOSE_BRACE
+	;
+
+parameters:
+	parameter
+	;
+
+parameter:
+	PARAMETER ',' | PARAMETER | /* empty */
 	;
 
 expression:

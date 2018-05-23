@@ -2,12 +2,12 @@
 #include <stdio.h>
 #include "grammer.tab.h"
 void comment();
-extern int yylineno;
 %}
 
 
 %%
-\n		{ ++yylineno; }
+\n		{ yylval = ++yylineno; }
+[a-zA-Z][a-zA-Z0-9_] { return PARAMETER; }
 
 "/*"		{ comment(); }
 [ \t\n]+	{ /* discard whitespace */ }
@@ -16,10 +16,13 @@ extern int yylineno;
 "}"		{ return CLOSE_BRACE; }
 "("		{ return '('; }
 ")"		{ return ')'; }
+"["		{ return '['; }
+"]"		{ return ']'; }
 ";"		{ return ';'; }
 [0-9]+		{ yylval=atoi(yytext); return NUMBER; }
 "return"	{ return RETURN; }
 
+"void"		{ return TYPE; }
 "int"		{ return TYPE; }
 "main"		{ return IDENTIFIER; }
 
