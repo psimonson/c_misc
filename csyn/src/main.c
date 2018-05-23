@@ -27,6 +27,8 @@ main()
 	return 0;
 }
 
+#define MAXTEMP 512
+
 void check_phase2()
 {
 	extern struct stack stack[];
@@ -34,19 +36,23 @@ void check_phase2()
 	int i;
 
 	for (i = 0; i < lines; i++) {
-		char *tmp;
-		
-		tmp = strtok(stack[i].text, " \n\r\t()");
+		char *tmp, *str;
+		int errors;
+
+		errors = 0;
+		str = str_dup(stack[i].text);
+		tmp = strtok(str, " \n\r\t()");
 		while (tmp) {
 			if (!strcmp(tmp, "int") || !strcmp(tmp, "void")
 				|| !strcmp(tmp, "char") || !strcmp(tmp, "long")
 				|| !strcmp(tmp, "main") || !strcmp(tmp, "{")
-				|| !strcmp(tmp, "}") || !strcmp(tmp, "(")
-				|| !strcmp(tmp, ")"))
-				printf("No errors on line %d.\n", stack[i].lineno);
-			else
-				printf("Error: %s at line %d.\n", tmp, stack[i].lineno);
+				|| !strcmp(tmp, "}") || !strcmp(tmp, "return")) {
+			} else
+				errors++;
 			tmp = strtok(NULL, " \n\r\t()");
 		}
+		free(str);
+		printf("Errors on line %d are: %d\nLine contains: %s\n",
+			stack[i].lineno, errors, stack[i].text);
 	}
 }
