@@ -1,26 +1,10 @@
 %{
 #include <stdio.h>
 #include <string.h>
-#include <stdarg.h>
 #include "grammer.tab.h"
 
-extern char *yytext;
 extern int yylineno;
-
-int yywrap(void)
-{
-	return 1;
-}
-
-void yyerror(const char *msg, ...)
-{
-	va_list ap;
-	va_start(ap, msg);
-	vfprintf(stderr, msg, ap);
-	va_end(ap);
-	exit(1);
-}
-
+extern void yyerror(const char*, ...);
 void comment();
 %}
 
@@ -53,8 +37,10 @@ void comment()
 {
 	int c, prev = 0;
 
-	while ((c = input()) != INPUT_EOF)
-		if (c == '*' && prev == '/')
+	while ((c = input()) != INPUT_EOF) {
+		if (c == '/' && prev == '*')
 			return;
+		prev = c;
+	}
 	yyerror("Unterminated comment, line %d.\n", yylineno);
 }

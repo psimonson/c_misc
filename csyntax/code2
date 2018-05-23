@@ -1,6 +1,7 @@
 #include <stdio.h>
 
+/* program to make shit happen */
 int main()
 {
-	return 0;
+	return 0; /* hello world */
 }

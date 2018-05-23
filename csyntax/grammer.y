@@ -1,6 +1,25 @@
 %{
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
+
+extern char *yytext;
+extern int yylineno;
+
+int yywrap(void)
+{
+	return 1;
+}
+
+void yyerror(const char *msg, ...)
+{
+	va_list ap;
+	va_start(ap, msg);
+	vfprintf(stderr, msg, ap);
+	va_end(ap);
+	exit(1);
+}
 %}
 
 %token OPEN_PAREN CLOSE_PAREN
