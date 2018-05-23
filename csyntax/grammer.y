@@ -38,6 +38,10 @@ header:
 	;
 
 function:
+	/* empty */ | functions function
+	;
+
+functions:
 	TYPE IDENTIFIER OPEN_PAREN CLOSE_PAREN OPEN_BRACE expression CLOSE_BRACE
 	;
 
