@@ -10,6 +10,7 @@ enum ::= keyword
 union ::= keyword
 static ::= keyword
 extern ::= keyword
+return ::= keyword
 if ::= keyword
 else ::= keyword
 while ::= keyword
