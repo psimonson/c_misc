@@ -2,20 +2,28 @@ CC=cc
 CFLAGS=-std=c89
 LDFLAGS=
 
+SOURCE=$(wildcard *.c)
+OBJECTS=$(SOURCE:.c=.o)
+TARGET=checker
+
 .PHONY: all clean
-all: checker
+all: $(TARGET)
 
-lex.yy.c: lex.l
-	@echo flex $^
-	@flex $^
+%.yy.c: %.l
+	@echo flex $<
+	@flex $<
 
-grammer.tab.c: grammer.y
-	@echo bison -d grammer.y
-	@bison -d grammer.y
+%.tab.c: %.y
+	@echo bison -d $<
+	@bison -d $<
 
-checker: lex.yy.c grammer.tab.c main.c
+%.o: %.c
+	@echo CC $(CFLAGS) -c -o $@ $<
+	@$(CC) $(CFLAGS) -c -o $@ $<
+
+$(TARGET): grammer.tab.o lex.yy.o $(OBJECTS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 clean:
-	rm -f ~* lex.yy.* grammer.tab.* checker
+	rm -f ~* *.o lex.yy.* grammer.tab.* checker
 
