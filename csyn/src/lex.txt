@@ -1,0 +1,12 @@
+main ::= identifier
+{    ::= operator
+}    ::= operator
+[    ::= operator
+]    ::= operator
+(    ::= operator
+)    ::= operator
+int ::= type
+void ::= type
+char ::= type
+short ::= type
+long ::= type
