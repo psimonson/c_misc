@@ -58,6 +58,8 @@ int parse_lexdefines(line, defs, maxdefs)
 int read_file(fp)
 	FILE *fp;
 {
+	extern int analyze();
+
 	if (fp) {
 		struct lex_define defs[MAXDEFINES];
 		char *buffer;
@@ -70,16 +72,56 @@ int read_file(fp)
 
 		buffer = (char*)malloc(size+1);
 		if (buffer) {
+			int errors;
+
 			fread(buffer, 1, size, fp);
 			buffer[size+1] = '\0';
 			count = parse_lexdefines(buffer, defs, MAXDEFINES);
 
 			for (i = 0; i < count; i++)
 				printf("read_file: key %s, def %s\n", defs[i].key, defs[i].def);
+			
+			errors = analyze("code.txt", defs, count);
 			free(buffer);
+			printf("Errors in code.txt: %d\n", errors);
 			return 0;
 		} else
 			fprintf(stderr, "Error: memory allocation error.\n");
 	}
 	return -1;
+}
+
+#define MAXLINE 512
+
+int analyze(filename, defs, count)
+	const char *filename;
+	struct lex_define *defs;
+	int count;
+{
+	char line[MAXLINE];
+	int errors, found;
+	FILE *fp;
+
+	if ((fp = fopen(filename, "r")) == NULL) {
+		fprintf(stderr, "Error: opening code.txt for reading.\n");
+		return -1;
+	}
+	errors = 0;
+	while (fgets(line, MAXLINE, fp) != NULL) {
+		char *tmp;
+
+		tmp = strtok(line, " \r\n\t");
+		while (tmp) {
+			int i;
+			found = 0;
+			for (i = 0; i < count; i++)
+				if (!strcmp(tmp, defs[i].key))
+					found = 1;
+			if (!found)
+				errors++;
+			tmp = strtok(NULL, " \r\n\t");
+		}
+	}
+	fclose(fp);
+	return errors;
 }
