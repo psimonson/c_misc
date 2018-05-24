@@ -73,10 +73,10 @@ int read_file(fp)
 			fread(buffer, 1, size, fp);
 			buffer[size+1] = '\0';
 			count = parse_lexdefines(buffer, defs, MAXDEFINES);
-			free(buffer);
 
 			for (i = 0; i < count; i++)
-				printf("Key: %s, Def: %s\n", defs[i].key, defs[i].def);
+				printf("read_file: key %s, def %s\n", defs[i].key, defs[i].def);
+			free(buffer);
 			return 0;
 		} else
 			fprintf(stderr, "Error: memory allocation error.\n");

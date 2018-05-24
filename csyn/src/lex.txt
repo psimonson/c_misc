@@ -1,6 +1,9 @@
 auto  ::= keyword
 register ::= keyword
 switch ::= keyword
+case ::= keyword
+break ::= keyword
+continue ::= keyword
 typedef ::= keyword
 struct ::= keyword
 enum ::= keyword
@@ -19,8 +22,23 @@ for   ::= keyword
 ]     ::= operator
 (     ::= operator
 )     ::= operator
++     ::= operator
+-     ::= operator
+/     ::= operator
+*     ::= operator
+++    ::= operator
++=    ::= operator
+-=    ::= operator
+/=    ::= operator
+*=    ::= operator
+<<=   ::= operator
+>>=   ::= operator
+%     ::= operator
+#     ::= preprocessor
 int   ::= type
 void  ::= type
 char  ::= type
-short ::= type
-long  ::= type
+short ::= type modifier
+long  ::= type modifier
+unsigned ::= type modifier
+signed ::= type modifier
