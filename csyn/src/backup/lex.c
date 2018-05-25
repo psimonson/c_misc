@@ -9,13 +9,12 @@ struct lex_define {
 };
 
 /* trim:  strip from line of text; tokens  */
-char *trim(str, end, ch)
+char *trim(str, end)
 	char *str;
 	char *end;
-	int ch;
 {
-	while (*str == ch) *str++;
-	while (*--end == ch);
+	while (isspace(*str)) *str++;
+	while (isspace(*--end));
 	end[1] = '\0';
 	return str;
 }
@@ -32,8 +31,8 @@ void parse_keyval(str, end, def)
 		def->key = def->def = NULL;
 		return;
 	}
-	def->key = trim(str, sep, ' ');
-	def->def = trim(sep+3, end, ' ');
+	def->key = trim(str, sep);
+	def->def = trim(sep+3, end);
 }
 
 /* parse_lexdefines:  parses lex defines; calling parse_keyval on every one */
