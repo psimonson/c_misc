@@ -112,19 +112,23 @@ int analyze(filename, defs, count)
 	}
 	errors = lineno = found = 0;
 	while (fgets(line, MAXLINE, fp) != NULL) {
-		char *tmp;
+		char *tmp, *old;
 		++lineno;
-		tmp = line;
+		old = tmp = line;
 		while (*tmp) {
 			int j;
 			for (i = 0; i < count; i++)
-				for (j = 0; j < strlen(defs[i].key); j++)
-					if (*tmp == defs[i].key[j])
+				for (j = 0; j < strlen(defs[i].key); j++) {
+					if (*tmp == defs[i].key[j]) {
+						*(tmp+1) = '\0';
 						found = 1;
-			tmp++;
+						break;
+					}
+					tmp++;
+				}
 		}
 		if (found)
-			push(lineno, line+(tmp-line));
+			push(lineno, old);
 	}
 	if (found)
 		for (i = 0; i < lineno; i++) {
