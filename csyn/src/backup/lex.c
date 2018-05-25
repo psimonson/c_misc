@@ -84,7 +84,7 @@ int read_file(fp)
 			errors = analyze("code.txt", defs, count);
 			free(buffer);
 			printf("Errors in code.txt: %d\n", errors);
-			return 0;
+			return errors;
 		} else
 			fprintf(stderr, "Error: memory allocation error.\n");
 	}
