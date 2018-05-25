@@ -77,9 +77,10 @@ int read_file(fp)
 			fread(buffer, 1, size, fp);
 			buffer[size+1] = '\0';
 			count = parse_lexdefines(buffer, defs, MAXDEFINES);
-
+#ifdef DEBUG
 			for (i = 0; i < count; i++)
 				printf("read_file: key %s, def %s\n", defs[i].key, defs[i].def);
+#endif
 			
 			errors = analyze("code.txt", defs, count);
 			free(buffer);
@@ -98,8 +99,10 @@ int analyze(filename, defs, count)
 	struct lex_define *defs;
 	int count;
 {
+	extern void push();
+	extern void pop();
 	char line[MAXLINE];
-	int errors, found;
+	int errors;
 	FILE *fp;
 
 	if ((fp = fopen(filename, "r")) == NULL) {
@@ -108,20 +111,63 @@ int analyze(filename, defs, count)
 	}
 	errors = 0;
 	while (fgets(line, MAXLINE, fp) != NULL) {
-		char *tmp;
+		char *tmp = line;
+		int i, j, lineno;
 
-		tmp = strtok(line, " \r\n\t");
-		while (tmp) {
-			int i;
-			found = 0;
-			for (i = 0; i < count; i++)
-				if (!strcmp(tmp, defs[i].key))
-					found = 1;
-			if (!found)
-				errors++;
-			tmp = strtok(NULL, " \r\n\t");
+		lineno = 0;
+		while (*tmp) {
+			for (j = 0; j < strlen(defs[i].key); j++) {
+				if (isalnum(*tmp) && *tmp == defs[i].key[j]) {
+					push(++lineno, defs[i].key);
+				}
+			}
+			tmp++;
+		}
+		for (i = 0; i < lineno; i++) {
+			char key[64];
+
+			pop(&lineno, key);
+			printf("Key: %s\tLine:%d\n",
+				key, lineno);
 		}
 	}
 	fclose(fp);
 	return errors;
+}
+
+#define MAXSTACK 100
+#define MAXKEY   64
+
+struct stack {
+	int lineno;
+	char key[MAXKEY];
+};
+
+struct stack stack[MAXSTACK];
+static int stackp = 0;
+
+void push(line, key)
+	int line;
+	char *key;
+{
+	if (stackp >= MAXSTACK)
+		printf("Error: stack full.\n");
+	else {
+		stack[stackp].lineno = line;
+		strcpy(stack[stackp].key, key);
+		stackp++;
+	}
+}
+
+void pop(line, key)
+	int *line;
+	char *key;
+{
+	if (stackp <= 0)
+		printf("Error: stack empty.\n");
+	else {
+		stackp--;
+		*line = stack[stackp].lineno;
+		strcpy(key, stack[stackp].key);
+	}
 }

@@ -3,6 +3,7 @@
 main()
 {
 	extern int parse_lexdefines();
+	extern int read_file();
 	int result;
 	FILE *fp;
 
