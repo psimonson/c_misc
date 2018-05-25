@@ -9,12 +9,13 @@ struct lex_define {
 };
 
 /* trim:  strip from line of text; tokens  */
-char *trim(str, end)
+char *trim(str, end, ch)
 	char *str;
 	char *end;
+	int ch;
 {
-	while (isspace(*str)) *str++;
-	while (isspace(*--end));
+	while (*str == ch) *str++;
+	while (*--end == ch);
 	end[1] = '\0';
 	return str;
 }
@@ -31,8 +32,8 @@ void parse_keyval(str, end, def)
 		def->key = def->def = NULL;
 		return;
 	}
-	def->key = trim(str, sep);
-	def->def = trim(sep+3, end);
+	def->key = trim(str, sep, ' ');
+	def->def = trim(sep+3, end, ' ');
 }
 
 /* parse_lexdefines:  parses lex defines; calling parse_keyval on every one */
@@ -81,7 +82,6 @@ int read_file(fp)
 			for (i = 0; i < count; i++)
 				printf("read_file: key %s, def %s\n", defs[i].key, defs[i].def);
 #endif
-			
 			errors = analyze("code.txt", defs, count);
 			free(buffer);
 			printf("Errors in code.txt: %d\n", errors);
@@ -102,35 +102,40 @@ int analyze(filename, defs, count)
 	extern void push();
 	extern void pop();
 	char line[MAXLINE];
-	int errors;
+	int errors, i;
+	int found;
+	int lineno;
 	FILE *fp;
 
 	if ((fp = fopen(filename, "r")) == NULL) {
 		fprintf(stderr, "Error: opening code.txt for reading.\n");
 		return -1;
 	}
-	errors = 0;
+	errors = lineno = found = 0;
 	while (fgets(line, MAXLINE, fp) != NULL) {
-		char *tmp = line;
-		int i, j, lineno;
-
-		lineno = 0;
+		char *tmp;
+		++lineno;
+		tmp = line;
 		while (*tmp) {
-			for (j = 0; j < strlen(defs[i].key); j++) {
-				if (isalnum(*tmp) && *tmp == defs[i].key[j]) {
-					push(++lineno, defs[i].key);
-				}
-			}
+			int j;
+			for (i = 0; i < count; i++)
+				for (j = 0; j < strlen(defs[i].key); j++)
+					if (*tmp == defs[i].key[j])
+						found = 1;
 			tmp++;
 		}
+		if (found)
+			push(lineno, line+(tmp-line));
+	}
+	if (found)
 		for (i = 0; i < lineno; i++) {
 			char key[64];
+			int ln;
 
-			pop(&lineno, key);
+			pop(&ln, key);
 			printf("Key: %s\tLine:%d\n",
-				key, lineno);
+				key, ln);
 		}
-	}
 	fclose(fp);
 	return errors;
 }
@@ -166,7 +171,7 @@ void pop(line, key)
 	if (stackp <= 0)
 		printf("Error: stack empty.\n");
 	else {
-		stackp--;
+		--stackp;
 		*line = stack[stackp].lineno;
 		strcpy(key, stack[stackp].key);
 	}
