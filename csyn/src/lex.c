@@ -93,6 +93,7 @@ int read_file(fp)
 
 #define MAXLINE 512
 
+/* analyze:  check code file for syntax errors; return error count */
 int analyze(filename, defs, count)
 	const char *filename;
 	struct lex_define *defs;
@@ -102,7 +103,6 @@ int analyze(filename, defs, count)
 	extern void pop();
 	char line[MAXLINE];
 	int errors, i;
-	int found;
 	int lineno;
 	FILE *fp;
 
@@ -110,28 +110,31 @@ int analyze(filename, defs, count)
 		fprintf(stderr, "Error: opening code.txt for reading.\n");
 		return -1;
 	}
-	errors = lineno = found = 0;
+	errors = lineno = 0;
 	while (fgets(line, MAXLINE, fp) != NULL) {
-		char *tmp, *old;
+		char *tmp, *old = NULL;
+		char found;
+
 		++lineno;
-		old = tmp = line;
-		while (*tmp) {
-			int j;
+		found = 0;
+		tmp = strtok(line, " \r\n\t");
+		while (tmp) {
+			old = tmp;
 			for (i = 0; i < count; i++)
-				for (j = 0; j < strlen(defs[i].key); j++) {
-					if (*tmp == defs[i].key[j]) {
-						*(tmp+1) = '\0';
-						found = 1;
-						break;
-					}
-					tmp++;
-				}
+				if (!strcmp(tmp, defs[i].key)) {
+					found = 1;
+					break;
+				} else
+					found = 0;
+			if (!found) {
+				push(lineno, old);
+				errors++;
+			}
+			tmp = strtok(NULL, " \r\n\t");
 		}
-		if (found)
-			push(lineno, old);
 	}
-	if (found)
-		for (i = 0; i < lineno; i++) {
+	if (errors)
+		for (i = 0; i < errors; i++) {
 			char key[64];
 			int ln;
 
@@ -154,6 +157,7 @@ struct stack {
 struct stack stack[MAXSTACK];
 static int stackp = 0;
 
+/* push:  push line,key to stack */
 void push(line, key)
 	int line;
 	char *key;
@@ -167,6 +171,7 @@ void push(line, key)
 	}
 }
 
+/* pop:  pop line,key from stack */
 void pop(line, key)
 	int *line;
 	char *key;
