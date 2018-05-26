@@ -9,9 +9,7 @@ struct lex_define {
 };
 
 /* trim:  strip from line of text; tokens  */
-char *trim(str, end)
-	char *str;
-	char *end;
+char *trim(char *str, char *end)
 {
 	while (isspace(*str)) *str++;
 	while (isspace(*--end));
@@ -20,10 +18,7 @@ char *trim(str, end)
 }
 
 /* parse_keyval:  actually parse the string; splitting into tokens */
-void parse_keyval(str, end, def)
-	char *str;
-	char *end;
-	struct lex_define *def;
+void parse_keyval(char *str, char *end, struct lex_define *def)
 {
 	char *sep = strstr(str, "::=");
 	if (!sep) {
@@ -36,10 +31,7 @@ void parse_keyval(str, end, def)
 }
 
 /* parse_lexdefines:  parses lex defines; calling parse_keyval on every one */
-int parse_lexdefines(line, defs, maxdefs)
-	char *line;
-	struct lex_define *defs;
-	int maxdefs;
+int parse_lexdefines(char *line, struct lex_define *defs, int maxdefs)
 {
 	int count = 0;
 	char *str = line;
@@ -55,8 +47,7 @@ int parse_lexdefines(line, defs, maxdefs)
 #define MAXDEFINES 128
 
 /* read_file:  gets a line of input from a file pointer */
-int read_file(fp)
-	FILE *fp;
+int read_file(FILE *fp)
 {
 	extern int analyze();
 
@@ -94,10 +85,7 @@ int read_file(fp)
 #define MAXLINE 512
 
 /* analyze:  check code file for syntax errors; return error count */
-int analyze(filename, defs, count)
-	const char *filename;
-	struct lex_define *defs;
-	int count;
+int analyze(const char *filename, struct lex_define *defs, int count)
 {
 	extern void push();
 	extern void pop();
@@ -158,9 +146,7 @@ struct stack stack[MAXSTACK];
 static int stackp = 0;
 
 /* push:  push line,key to stack */
-void push(line, key)
-	int line;
-	char *key;
+void push(int line, char *key)
 {
 	if (stackp >= MAXSTACK)
 		printf("Error: stack full.\n");
@@ -172,9 +158,7 @@ void push(line, key)
 }
 
 /* pop:  pop line,key from stack */
-void pop(line, key)
-	int *line;
-	char *key;
+void pop(int *line, char *key)
 {
 	if (stackp <= 0)
 		printf("Error: stack empty.\n");
