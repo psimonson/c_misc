@@ -29,6 +29,20 @@ ast *make_integerExp(int n)
 	return NULL;
 }
 
+/*
+ast *make_stringExp(char *operator)
+{
+	ast *new_ast = (ast*)malloc(sizeof(*new_ast));
+	if (new_ast) {
+		new_ast->tag = string_exp;
+		new_ast->op.string = strdup(operator);
+		return new_ast;
+	} else
+		fprintf(stderr, "Error: cannot create AST.\n");
+	return NULL;
+}
+*/
+
 void free_ast(ast *p)
 {
 	if (p) {

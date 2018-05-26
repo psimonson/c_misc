@@ -20,12 +20,11 @@ char *get_op(ast *obj)
 {
 	if (obj == NULL)
 		return NULL;
-	return strdup(obj->op.binary.op);
+	return obj->op.binary.op;
 }	
 
 main()
 {
-	char *p1, *p2;
 	ast *obj;
 	int i;
 
@@ -41,9 +40,7 @@ main()
 		obj->op.binary.right->op.integer);
 
 	printf("Count of AST objects: %d\n", get_count(obj));
-	printf("Operators: %s, %s\n", (p1 = get_op(obj)), (p2 = get_op(obj->op.binary.left)));
-	free(p1);
-	free(p2);
+	printf("Operators: %s, %s\n", get_op(obj), get_op(obj->op.binary.left));
 	free_ast(obj);
 	return 0;
 }

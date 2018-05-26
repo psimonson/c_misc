@@ -4,7 +4,7 @@
 #define MAXOPLEN 64
 
 typedef struct Exp {
-	enum { integer_exp, binary_exp, variable_exp } tag;
+	enum { integer_exp, string_exp, binary_exp, variable_exp } tag;
 	union {
 		int integer;
 		struct {
