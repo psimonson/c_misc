@@ -1,6 +1,5 @@
-#include <stdio.h>
+#include "stack.h"
 #include <stdlib.h>
-#include <string.h>
 #include <ctype.h>
 
 struct lex_define {
@@ -115,7 +114,7 @@ int analyze(const char *filename, struct lex_define *defs, int count)
 				} else
 					found = 0;
 			if (!found) {
-				push(lineno, old);
+				push_stack(lineno, old);
 				errors++;
 			}
 			tmp = strtok(NULL, " \r\n\t");
@@ -126,45 +125,10 @@ int analyze(const char *filename, struct lex_define *defs, int count)
 			char key[64];
 			int ln;
 
-			pop(&ln, key);
+			pop_stack(&ln, key);
 			printf("Key: %s\tLine:%d\n",
 				key, ln);
 		}
 	fclose(fp);
 	return errors;
-}
-
-#define MAXSTACK 100
-#define MAXKEY   64
-
-struct stack {
-	int lineno;
-	char key[MAXKEY];
-};
-
-struct stack stack[MAXSTACK];
-static int stackp = 0;
-
-/* push:  push line,key to stack */
-void push(int line, char *key)
-{
-	if (stackp >= MAXSTACK)
-		printf("Error: stack full.\n");
-	else {
-		stack[stackp].lineno = line;
-		strcpy(stack[stackp].key, key);
-		stackp++;
-	}
-}
-
-/* pop:  pop line,key from stack */
-void pop(int *line, char *key)
-{
-	if (stackp <= 0)
-		printf("Error: stack empty.\n");
-	else {
-		--stackp;
-		*line = stack[stackp].lineno;
-		strcpy(key, stack[stackp].key);
-	}
 }
