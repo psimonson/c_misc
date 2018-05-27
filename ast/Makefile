@@ -8,15 +8,23 @@ TARGET=ast
 
 all: $(TARGET)
 
+%.yy.c: %.l
+	@echo flex $<
+	@flex $<
+
+%.tab.c: %.y
+	@echo bison -d $<
+	@bison -d $<
+
 %.o: %.c
 	@echo CC $(CFLAGS) -c -o $@ $<
 	@$(CC) $(CFLAGS) -c -o $@ $<
 
-$(TARGET): $(OBJECTS)
+$(TARGET): grammer.tab.o lex.yy.o $(OBJECTS)
 	@echo CCLD $(CFLAGS) $(LDFLAGS) -o $@ $^
 	@$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 clean:
-	@echo RM -f *~ $(OBJECTS) $(TARGET)
-	@rm -f *~ $(OBJECTS) $(TARGET)
+	@echo RM -f *~ grammer.tab.* lex.yy.* $(OBJECTS) $(TARGET)
+	@rm -f *~ grammer.tab.* lex.yy.* $(OBJECTS) $(TARGET)
  
