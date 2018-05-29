@@ -1,6 +1,9 @@
 %{
 extern char *yytext;
 extern int yylineno;
+extern int yylex(void);
+int yywrap(void);
+void yyerror(const char *);
 %}
 
 %token INCLUDE HEADER_NAME
@@ -41,7 +44,7 @@ int yywrap()
 	return 1;
 }
 
-int yyerror(const char *msg)
+void yyerror(const char *msg)
 {
 	fprintf(stderr, "%s: line %d \"%s\"\n", msg, yylineno, yytext);
 }

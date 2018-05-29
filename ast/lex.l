@@ -2,6 +2,7 @@
 #include "grammer.tab.h"
 extern int yylineno;
 extern char *yytext;
+extern void yyerror(const char *);
 void comment();
 %}
 

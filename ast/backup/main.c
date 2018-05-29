@@ -58,7 +58,7 @@ int get_op_count(ast *obj)
 		++count;
 }
 
-main()
+int main()
 {
 	char **ops;
 	ast *obj;

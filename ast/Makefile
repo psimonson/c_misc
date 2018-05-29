@@ -1,5 +1,5 @@
 CC=cc
-CFLAGS?=-std=c89
+CFLAGS?=
 LDFLAGS=
 
 SOURCES=$(wildcard *.c)
