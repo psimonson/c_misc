@@ -43,35 +43,55 @@ int process_file(FILE *fp, char *lines[], int maxlines)
 int main(int argc, char *argv[])
 {
 	bool op_n = false;
+	bool op_o = false;
 	while(--argc > 0 && (*++argv)[0] == '-')
 		while(*++argv[0])
 			switch(*argv[0]) {
 				case 'n':
 					op_n = true;
 					break;
+				case 'o':
+					op_o = true;
+					break;
 				default:
 					printf("tail: Unknown option '%c'.\n",
 						(*argv)[0]);
+					argc = 0;
 					break;
 			}
-	if (argc < 1 || argc > 2)
-		printf("Usage: tail [-n count] <filename.ext>\n");
+	if (argc < 1 || argc > 3)
+		printf("Usage: tail [-n count] <filename.ext> [outfile.ext]\n");
 	else {
 		FILE *fp;
 		char *lines[TOTAL_LINES];
 		int nlines = MAXLINES;
 		int i;
-
+		FILE *out;
 		if (op_n)
 			nlines = atoi(*argv++);
 		if ((fp = fopen(*argv, "rt")) == NULL) {
-			printf("tail: Cannot open '%s' for reading.\n", *argv);
+			printf("tail: Can't open '%s' for reading.\n",
+				*argv);
 			return 1;
 		}
+		if (op_o)
+			if ((out = fopen(*++argv, "wt")) == NULL) {
+				printf("tail: Can't open '%s' for writing.\n",
+					*argv);
+				fclose(fp);
+				return 2;
+			}
 		nlines = process_file(fp, lines, nlines);
 		fclose(fp);
-		for(i = 0; i < nlines; i++)
-		printf("%s", lines[i]);
+		if (op_o) {
+			for(i = 0; i < nlines; i++)
+				fprintf(out, "%s", lines[i]);
+			fclose(out);
+			printf("Done writing file: %s\n", *argv);
+		} else {
+			for(i = 0; i < nlines; i++)
+				printf("%s", lines[i]);
+		}
 	}
 	return 0;
 }
