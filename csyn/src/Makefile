@@ -1,10 +1,10 @@
 CC?=cc
-CFLAGS?=-std=c89
+CFLAGS?=-std=c89 -g
 LDFLAGS?=
 
 SOURCES:=$(wildcard *.c)
 OBJECTS:=$(SOURCES:.c=.o)
-TARGET=hello
+TARGET=csyn
 
 .PHONY: all clean
 all: $(TARGET)
@@ -16,6 +16,10 @@ all: $(TARGET)
 $(TARGET): $(OBJECTS)
 	@echo CCLD $(CFLAGS) $(LDFLAGS) -o $@ $^
 	@$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+
+debug: clean $(TARGET)
+	@echo gdb --batch --ex r --ex bt --ex q --args $(TARGET)
+	@gdb --batch --ex r --ex bt --ex q --args $(TARGET)
 
 clean:
 	@echo rm -f *~ $(OBJECTS) $(TARGET)

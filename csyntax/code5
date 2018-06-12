@@ -1,0 +1,12 @@
+#include <stdio.h>
+
+void helper() {
+	printf();
+}
+
+/* this is a test program */
+int main()
+{
+	helper();
+	return 0; /* return success */
+}

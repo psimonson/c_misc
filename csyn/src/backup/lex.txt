@@ -1,0 +1,45 @@
+auto  ::= keyword
+register ::= keyword
+switch ::= keyword
+case ::= keyword
+break ::= keyword
+continue ::= keyword
+typedef ::= keyword
+struct ::= keyword
+enum ::= keyword
+union ::= keyword
+static ::= keyword
+extern ::= keyword
+return ::= keyword
+if ::= keyword
+else ::= keyword
+while ::= keyword
+do    ::= keyword
+for   ::= keyword
+;     ::= operator
+{     ::= operator
+}     ::= operator
+[     ::= operator
+]     ::= operator
+(     ::= operator
+)     ::= operator
++     ::= operator
+-     ::= operator
+/     ::= operator
+*     ::= operator
+++    ::= operator
++=    ::= operator
+-=    ::= operator
+/=    ::= operator
+*=    ::= operator
+<<=   ::= operator
+>>=   ::= operator
+%     ::= operator
+#     ::= preprocessor
+int   ::= type
+void  ::= type
+char  ::= type
+short ::= type modifier
+long  ::= type modifier
+unsigned ::= type modifier
+signed ::= type modifier

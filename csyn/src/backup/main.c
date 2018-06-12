@@ -1,20 +1,21 @@
-#include "common/helper.h"
+#include <stdio.h>
 
-#define STATE_QUOTE   0
-#define STATE_COMMENT 1
-#define STATE_CODE    2
-
-int main()
+main()
 {
-	extern int search(int);
-	extern int getch();
-	int state, c;
+	extern int parse_lexdefines();
+	extern int read_file();
+	int result;
+	FILE *fp;
 
-	while ((c = getch()) != EOF)
-		state = search(c);
-	if (state == STATE_CODE)
-		printf("No errors found!\n");
+	if ((fp = fopen("lex.txt", "r")) == NULL) {
+		fprintf(stderr, "Error: opening file for reading.\n");
+		return 1;
+	}
+	result = read_file(fp);
+	fclose(fp);
+	if (!result)
+		printf("File processed okay!\n");
 	else
-		printf("Code ended inside : %s\n", (state == STATE_QUOTE) ? "Quotations" : "Comment");
+		printf("Failed to process!\n");
 	return 0;
 }
