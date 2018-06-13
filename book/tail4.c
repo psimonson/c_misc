@@ -67,14 +67,14 @@ int main(int argc, char *argv[])
 		int nlines = MAXLINES;
 		int i;
 		FILE *out;
-		if (op_n)
+		if ((argc == 2 || argc == 3) && op_n)
 			nlines = atoi(*argv++);
 		if ((fp = fopen(*argv, "rt")) == NULL) {
 			printf("tail: Can't open '%s' for reading.\n",
 				*argv);
 			return 1;
 		}
-		if (op_o)
+		if ((argc == 2 || argc == 3) && op_o)
 			if ((out = fopen(*++argv, "wt")) == NULL) {
 				printf("tail: Can't open '%s' for writing.\n",
 					*argv);
