@@ -4,7 +4,7 @@
 /* undcl:  convert word description to declaration */
 int main()
 {
-	int type;
+	int type, prevtype = PARENS;
 	char temp[MAXTOKEN];
 
 	while (gettoken() != EOF) {
@@ -13,13 +13,20 @@ int main()
 			if (type == PARENS || type == BRACKETS)
 				strcat(out, token);
 			else if (type == '*') {
-				sprintf(temp, "(*%s)", out);
-				strcpy(out, temp);
+				if (prevtype == PARENS ||
+					prevtype == BRACKETS) {
+					sprintf(temp, "(*%s)", out);
+					strcpy(out, temp);
+				} else {
+					sprintf(temp, "*%s", out);
+					strcpy(out, temp);
+				}
 			} else if (type == NAME) {
 				sprintf(temp, "%s %s", token, out);
 				strcpy(out, temp);
 			} else
 				printf("invalid input at %s\n", token);
+		prevtype = type;
 		printf("%s\n", out);
 	}
 	return 0;
