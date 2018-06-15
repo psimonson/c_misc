@@ -4,12 +4,22 @@
 int main() /* convert declaration to words */
 {
 	while (gettoken() != EOF) {
+		if (findqualifier(token)) {
+			strcpy(qtype, strcat(token, " "));
+			gettoken();
+		} else
+			qtype[0] = '\0';
 		strcpy(datatype, token); /* 1st token is data type */
 		out[0] = '\0';
 		dcl();	/* parse rest of line */
-		if (tokentype != '\n')
+		if (tokentype != '\n') {
 			printf("syntax error at %s\n", token);
-		printf("%s: %s %s\n", name, out, datatype);
+			parseerror();
+		}
+		if (iserror)
+			iserror = 0;
+		else
+			printf("%s: %s %s\n", name, out, datatype);
 	}
 	return 0;
 }
