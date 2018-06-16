@@ -4,11 +4,16 @@
 
 #define MAXOPLEN 64
 
+<<<<<<< HEAD
 typedef struct {
+=======
+typedef struct tagAST {
+>>>>>>> development
 	enum { integer_exp, binary_exp, variable_exp } tag;
 	union {
 		int integerExp;
 		struct {
+<<<<<<< HEAD
 			char op[MAXOPLEN;
 			ast *left;
 			ast *right;
@@ -17,6 +22,16 @@ typedef struct {
 			char op[MAXOPLEN];
 			ast *left;
 			ast *right;
+=======
+			char op[MAXOPLEN];
+			struct tagAST *left;
+			struct tagAST *right;
+		} binaryExp;
+		struct {
+			char op[MAXOPLEN];
+			struct tagAST *left;
+			struct tagAST *right;
+>>>>>>> development
 		} variableExp;
 	} op;
 } ast;
