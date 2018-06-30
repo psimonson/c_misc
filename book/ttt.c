@@ -22,12 +22,14 @@ int main()
 
 char game_board[BOARD_HEIGHT][BOARD_WIDTH];
 char game_status[BOARD_HEIGHT][BOARD_WIDTH];
+int win;
 
 /* init_game:  initializes game board and state */
 void init_game(void)
 {
 	extern char game_board[][BOARD_WIDTH];
 	extern char game_status[][BOARD_WIDTH];
+	extern int win;
 	int x,y;
 
 	srand((unsigned int)time(NULL));
@@ -43,6 +45,8 @@ void init_game(void)
 	for (y=0;y<BOARD_HEIGHT;y++)
 		for (x=0;x<BOARD_WIDTH;x++)
 			game_status[y][x] = 0;
+
+	win = 0;
 }
 
 /* draw_game:  draws the game screen */
@@ -136,5 +140,25 @@ void get_input(void)
 		default:
 			printf("Invalid input... try again.\n");
 	}
-	game_status[y][x] = choice;
+	if (game_status[y][x] == 0)
+		game_status[y][x] = choice;
+	else
+		printf("That was already selected.\n");
+	for (y=0;y<BOARD_HEIGHT;y++)
+		for (x=0;x<BOARD_WIDTH;x++)
+			if ((x%2) == 0 && (y%2) == 0)
+				if ((x%2) == 0 && y == 0)
+					if (game_status[y][x] == 1)
+						win = 1;
+					else if (game_status[y][x] == 2)
+						win = 2;
+					else
+						win = 0;
+	if (win == 1) {
+		printf("X's won!\n");
+		exit(0);
+	} else if (win == 2) {
+		printf("O's won!\n");
+		exit(0);
+	}
 }
