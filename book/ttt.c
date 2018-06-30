@@ -2,20 +2,17 @@
 #include <stdlib.h>
 #include <time.h>
 
+/* rudimentary tic-tac-toe game in C */
 int main()
 {
 	void init_game(void);
 	void draw_game(void);
 	void get_input(void);
-/*	void set_game(void); */
-	int i;
 
 	init_game();
-	i = 0;
-	while (i < 3) {
+	while (1) {
 		draw_game();
 		get_input();
-		i++;
 	}
 	return 0;
 }
@@ -26,6 +23,7 @@ int main()
 char game_board[BOARD_HEIGHT][BOARD_WIDTH];
 char game_status[BOARD_HEIGHT][BOARD_WIDTH];
 
+/* init_game:  initializes game board and state */
 void init_game(void)
 {
 	extern char game_board[][BOARD_WIDTH];
@@ -47,6 +45,7 @@ void init_game(void)
 			game_status[y][x] = 0;
 }
 
+/* draw_game:  draws the game screen */
 void draw_game(void)
 {
 	extern char game_board[][BOARD_WIDTH];
@@ -65,6 +64,7 @@ void draw_game(void)
 	}
 }
 
+/* set_game:  randomly generated game map */
 void set_game(void)
 {
 	extern char game_status[][BOARD_WIDTH];
@@ -76,6 +76,7 @@ void set_game(void)
 				game_status[y][x] = (rand()%2)+1;
 }
 
+/* get_input:  used to get input from user; change game state */
 void get_input(void)
 {
 	extern char game_status[][BOARD_WIDTH];
@@ -87,12 +88,53 @@ void get_input(void)
 			"Enter your choice: ");
 	if (scanf("%d",&choice) != 1)
 		return;
+	if (choice == 0)
+		exit(0);
 	printf("Valid positions: 1, 2, 3, 4, 5, 6, 7, 8, 9.\n"
 			"Enter choice: ");
 	if (scanf("%d",&pos) != 1)
 		return;
-	for (y=0;y<BOARD_HEIGHT;y++)
-		for (x=0;x<BOARD_WIDTH;x++)
-			if (x == (pos-1) && y == (pos-1))
-				game_status[y+(pos-1)][x+(pos-1)] = choice;
+	if (pos == 0)
+		exit(0);
+	switch(pos) {
+		case 1:
+			x = 0;
+			y = 0;
+			break;
+		case 2:
+			x = 2;
+			y = 0;
+			break;
+		case 3:
+			x = 4;
+			y = 0;
+			break;
+		case 4:
+			x = 0;
+			y = 2;
+			break;
+		case 5:
+			x = 2;
+			y = 2;
+			break;
+		case 6:
+			x = 4;
+			y = 2;
+			break;
+		case 7:
+			x = 0;
+			y = 4;
+			break;
+		case 8:
+			x = 2;
+			y = 4;
+			break;
+		case 9:
+			x = 4;
+			y = 4;
+			break;
+		default:
+			printf("Invalid input... try again.\n");
+	}
+	game_status[y][x] = choice;
 }
