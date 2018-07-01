@@ -8,10 +8,12 @@ int main()
 	void init_game(void);
 	void draw_game(void);
 	void get_input(void);
+	void check_end(void);
 
 	init_game();
 	while (1) {
 		draw_game();
+		check_end();
 		get_input();
 	}
 	return 0;
@@ -144,16 +146,33 @@ void get_input(void)
 		game_status[y][x] = choice;
 	else
 		printf("That was already selected.\n");
-	for (y=0;y<BOARD_HEIGHT;y++)
-		for (x=0;x<BOARD_WIDTH;x++)
-			if ((x%2) == 0 && (y%2) == 0)
-				if ((x%2) == 0 && y == 0)
-					if (game_status[y][x] == 1)
-						win = 1;
-					else if (game_status[y][x] == 2)
-						win = 2;
-					else
-						win = 0;
+
+}
+
+int check_status(void)
+{
+	extern char game_status[][BOARD_WIDTH];
+	extern int win;
+	if (game_status[0][0] && game_status[0][2] && game_status[0][4])
+		win = game_status[0][0];
+	else if (game_status[2][0] && game_status[2][2] && game_status[2][4])
+		win = game_status[2][0];
+	else if (game_status[4][0] && game_status[4][2] && game_status[4][4])
+		win = game_status[4][0];
+	else if (game_status[0][0] && game_status[2][2] && game_status[4][4])
+		win = game_status[0][0];
+	else if (game_status[4][0] && game_status[2][2] && game_status[0][4])
+		win = game_status[4][0];
+	else
+		win = 0;
+}
+
+void check_end(void)
+{
+	extern char game_status[][BOARD_WIDTH];
+	extern int win;
+	int x,y;
+	check_status();
 	if (win == 1) {
 		printf("X's won!\n");
 		exit(0);
