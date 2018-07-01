@@ -163,6 +163,12 @@ int check_status(void)
 		win = game_status[0][0];
 	else if (game_status[4][0] && game_status[2][2] && game_status[0][4])
 		win = game_status[4][0];
+	else if (game_status[0][0] && game_status[2][0] && game_status[4][0])
+		win = game_status[0][0];
+	else if (game_status[0][2] && game_status[2][2] && game_status[4][2])
+		win = game_status[0][2];
+	else if (game_status[0][4] && game_status[2][4] && game_status[4][4])
+		win = game_status[0][4];
 	else
 		win = 0;
 }
