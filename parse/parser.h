@@ -4,19 +4,18 @@
 
 #define MAXTOKEN	100
 
-enum { NAME, PARENS, BRACKETS, FUNCARGS };
+enum { NAME, PARENS, BRACKETS, FUNCARGS = '(' };
 
 static void dcl(void);
 static void parseerror(void);
-static int findqualifier(char *s);
+static int findqualifier(void);
 static int gettoken(void);
 
 int iserror;			/* is parse error newline */
 int tokentype;			/* type of last token */
 char token[MAXTOKEN];		/* last token string */
 char name[MAXTOKEN];		/* indentifier name */
-char datatype[MAXTOKEN];		/* data type = char, int, etc. */
-char qtype[MAXTOKEN];		/* type of qualifier */
+char datatype[MAXTOKEN];	/* data type = char, int, etc. */
 char out[1000];			/* output string */
 
 /* qualifiers are defined here; for comparison */
@@ -25,9 +24,47 @@ static char *qualifiers[] = {
 	"signed", "unsigned", "short", "long"
 };
 
+/* plist:  get function parameters */
+static void plist(void)
+{
+	char qtype[MAXTOKEN];
+	char ptype[MAXTOKEN];
+	int found;
+
+	gettoken();
+	if ((found = findqualifier())) {
+		strcpy(qtype, token);
+		gettoken();
+	}
+	strcpy(ptype, token);
+	dcl();
+	if (found) {
+		strcat(out, " ");
+		strcat(out, qtype);
+	}
+	strcat(out, " ");
+	strcat(out, ptype);
+	while (tokentype == ',') {
+		gettoken();
+		if ((found = findqualifier())) {
+			strcpy(qtype, token);
+			gettoken();
+		}
+		strcpy(ptype, token);
+		dcl();
+		if (found) {
+			strcat(out, " ");
+			strcat(out, qtype);
+		}
+		strcat(out, " ");
+		strcat(out, ptype);
+	}
+}
+
 /* dirdcl:  parse a direct declaration */
 static void dirdcl(void)
 {
+	char temp[MAXTOKEN];
 	int type;
 
 	if (tokentype == '(') {
@@ -49,9 +86,16 @@ static void dirdcl(void)
 		if (type == PARENS)
 			strcat(out, " function returning");
 		else if (type == FUNCARGS) {
-			strcat(out, "function ");
-			strcat(out, token);
-			strcat(out, " returning");
+			strcat(temp, name);
+			strcat(out, " function receiving");
+			plist();
+			if (tokentype != ')') {
+				printf("error: missing ) or parameter decalaration\n");
+				parseerror();
+				return;
+			}
+			strcat(out, " and returning");
+			strcat(name, temp);
 		} else {
 			strcat(out, " array");
 			strcat(out, token);
@@ -86,12 +130,12 @@ static void parseerror(void)
 }
 
 /* findqualifier:  1 if s matches a qualifier; 0 otherwise */
-static int findqualifier(char *s)
+static int findqualifier(void)
 {
 	int i, len = sizeof(qualifiers)/sizeof(qualifiers[0]);
 
 	for (i = 0; i < len; i++)
-		if (!strcmp(qualifiers[i], s))
+		if (!strcmp(token, qualifiers[i]))
 			return 1;
 	return 0;
 }
@@ -108,18 +152,11 @@ static int gettoken(void)
 			strcpy(token, "()");
 			return tokentype = PARENS;
 		} else {
-			if (c == '*') {
-				ungetch(c);
-				return tokentype = '(';
-			} else {
-				*p++ = '(';
-				for (*p++ = c; (*p++ = getch()) != ')'; );
-				*p = '\0';
-				return tokentype = FUNCARGS;
-			}
+			ungetch(c);
+			return tokentype = FUNCARGS;
 		}
 	} else if (c == '[') {
-		for (*p++ = c; (*p++ = getch()) != ']'; );
+		for (*p++ = c; isdigit(*p++ = getch()) != ']'; );
 		*p = '\0';
 		return tokentype = BRACKETS;
 	} else if (isalpha(c)) {

@@ -4,11 +4,6 @@
 int main() /* convert declaration to words */
 {
 	while (gettoken() != EOF) {
-		if (findqualifier(token)) {
-			strcpy(qtype, strcat(token, " "));
-			gettoken();
-		} else
-			qtype[0] = '\0';
 		strcpy(datatype, token); /* 1st token is data type */
 		out[0] = '\0';
 		dcl();	/* parse rest of line */
