@@ -8,13 +8,13 @@ all: prog1 libmemhook
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 prog1: prog1.o
-	$(CC) $(LDFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^
 
 memhook.o: memhook.c
 	$(CC) $(CFLAGS) -fPIC -c -o $@ $<
 
 libmemhook: memhook.o
-	$(CC) $(LDFLAGS) -shared -ldl -o $@.so $^
+	$(CC) $(CFLAGS) -shared -ldl -o $@.so $^
 
 clean:
 	rm -f *.o *.so prog1
