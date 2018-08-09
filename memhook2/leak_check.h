@@ -69,7 +69,7 @@ static struct DLIST *leakcheck_init(void *p, size_t size)
 {
 	_leak_list = dlist_create_list(add_data_fn,
         remove_data_fn, append_node_fn, prepend_node_fn);
-	if (!check_mem(_leak_list)) {
+	if (!_leak_list) {
 		error_print("Cannot create leak list.");
 		return NULL;
 	}
