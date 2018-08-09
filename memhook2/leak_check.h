@@ -68,7 +68,7 @@ static void append_node_fn(void **list, void *p, size_t size)
 static struct DLIST *leakcheck_init(void *p, size_t size)
 {
 	_leak_list = dlist_create_list(add_data_fn,
-        remove_data_fn, append_node_fn, prepend_node_fn);
+        remove_data_fn, prepend_node_fn, append_node_fn);
 	if (!_leak_list) {
 		error_print("Cannot create leak list.");
 		return NULL;
