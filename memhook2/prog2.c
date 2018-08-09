@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <malloc.h>
 #include "debug.h"
-#include "leak_check.h"
 
 int main()
 {

@@ -127,10 +127,6 @@ static struct DLIST *dlist_create_list(add_data_cb add_func,
     list->count = 1;
     list->data = NULL;
     list->next = NULL;
-    if (!list->data) {
-        free(list);
-        return NULL;
-    }
     return list;
 }
 
