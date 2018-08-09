@@ -1,20 +1,14 @@
 CC=cc
-CFLAGS=-std=c89
+CFLAGS=-std=gnu89
 LDFLAGS=
 
-all: prog1 libmemhook
+all: prog1 memhook
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c -o $@ $<
+prog1: prog1.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
-prog1: prog1.o
-	$(CC) $(CFLAGS) -o $@ $^
-
-memhook.o: memhook.c
-	$(CC) $(CFLAGS) -fPIC -c -o $@ $<
-
-libmemhook: memhook.o
-	$(CC) $(CFLAGS) -shared -ldl -o $@.so $^
+memhook: memhook.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -fPIC -shared -o $@.so $^ -ldl
 
 clean:
 	rm -f *.o *.so prog1

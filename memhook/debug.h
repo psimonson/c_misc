@@ -6,7 +6,6 @@
 #include <stdarg.h>
 #include <errno.h>
 #include <string.h>
-#include <assert.h>
 
 void debug_print(const char *format, ...)
 {
@@ -30,24 +29,30 @@ int error_print(const char *format, ...)
 	strcat(msg, "\n");
 	vfprintf(stderr, msg, ap);
 	va_end(ap);
-	assert(errno);
+	if (!errno)
+		return 0;
+	return errno;
 }
 
-void check_mem(void *mem)
+int check_mem(void *mem)
 {
-	assert(mem);
 #ifndef NDEBUG
-	debug_print("memory block (%p) okay.", mem);
+	if (mem != NULL)
+		debug_print("memory block (%p) okay.", mem);
 #endif
+	return (mem != NULL);
 }
 
-void free_mem(void *mem)
+int free_mem(void *mem)
 {
-	assert(mem);
-	free(mem);
+	if (mem != NULL) {
+		free(mem);
 #ifndef NDEBUG
-	debug_print("memory block (%p) freed.", mem);
+		debug_print("memory block (%p) freed.", mem);
 #endif
+		mem = NULL;
+	}
+	return (mem != NULL);
 }
 
 #endif

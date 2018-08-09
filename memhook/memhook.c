@@ -1,25 +1,19 @@
 #define _GNU_SOURCE
 #include <stdio.h>
-#include <stdint.h>
-#include <unistd.h>
+#include <sys/socket.h>
 #include <dlfcn.h>
 #include "debug.h"
 
-/* lcheck() is for memory leak checking */
-void lcheck(void);
+int (*new_socket)(int, int, int);
 
-void *malloc(size_t size)
+int socket(int domain, int type, int protocol)
 {
-	void *(*my_malloc)(size_t);
-	my_malloc = dlsym(RTLD_NEXT, "malloc");
-	check_mem(my_malloc);
-	void *p = my_malloc(size);
-	debug_print("malloc(%lu) = %p", size, p);
-	lcheck();
-	return p;
-}
-
-void lcheck(void)
-{
-	debug_print("Display memory leaks...");
+	debug_print("socket() call intercepted");
+	new_socket = dlsym(RTLD_NEXT, "socket");
+	if (!new_socket)
+		return error_print("Cannot get next socket() call.");
+#ifndef NDEBUG
+	debug_print("inside of hook");
+#endif
+	return new_socket(domain, type, protocol);
 }

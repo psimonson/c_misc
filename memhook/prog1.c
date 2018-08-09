@@ -1,15 +1,15 @@
-#define _GNU_SOURCE
 #include <stdio.h>
-#include <stdlib.h>
+#include <sys/socket.h>
 #include "debug.h"
 
 int main()
 {
-	int *mem = NULL;
+	int sockfd;
 
-	mem = malloc(10);
-	if (!mem)
-		return error_print("Error allocating memory.");
-	free(mem);
+	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+		return error_print("Could not create socket.\n");
+	else
+		debug_print("Socket created successfully.\n");
+	close(sockfd);
 	return 0;
 }
