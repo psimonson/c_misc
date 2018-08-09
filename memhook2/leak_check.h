@@ -16,10 +16,10 @@ struct DLIST *_leak_list;
 
 static struct DLIST *leakcheck_init(void *p, size_t size)
 {
-    void *(*add_data_fn)(void *p, size_t size);
-    void (*remove_data_fn)(void **list);
-    void (*prepend_node_fn)(void **list, void *p, size_t size);
-    void (*append_node_fn)(void **list, void *p, size_t size);
+    static void *(*add_data_fn)(void *p, size_t size);
+    static void (*remove_data_fn)(void **list);
+    static void (*prepend_node_fn)(void **list, void *p, size_t size);
+    static void (*append_node_fn)(void **list, void *p, size_t size);
 	_leak_list = dlist_create_list(add_data_fn,
         remove_data_fn, append_node_fn, prepend_node_fn);
 	if (!check_mem(_leak_list)) {
