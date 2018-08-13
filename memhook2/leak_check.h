@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <stdlib.h>
-#include "d_list.h"
 #include "debug.h"
+#include "d_list.h"
 
 struct DLIST_DATA2 {
 	void *mem;
@@ -38,42 +38,51 @@ static void remove_data_fn(void **dat)
 
 static void prepend_node_fn(void **list, void *p, size_t size)
 {
-    struct DLIST *node, *tmp;
-    node = (struct DLIST *)malloc(sizeof(struct DLIST));
-    if (!node)
-        return;
-    ((struct DLIST *)*list)->count++;
-    tmp = (*list);
-    node->count = ((struct DLIST *)*list)->count;
-    node->data = dlist_add_data(p, size);
-    node->next = tmp;
-    (*list) = node;
+	struct DLIST *node, *tmp;
+	node = (struct DLIST *)malloc(sizeof(struct DLIST));
+	if (!node)
+		return;
+	if (!(*list)) {
+		node->count = 1;
+		node->data = dlist_add_data(p, size);
+		node->next = NULL;
+		(*list) = node;
+	} else {
+		((struct DLIST *)*list)->count++;
+		tmp = (*list);
+		node->count = ((struct DLIST *)*list)->count;
+		node->data = dlist_add_data(p, size);
+		node->next = tmp;
+		(*list) = node;
+	}
 }
 
 static void append_node_fn(void **list, void *p, size_t size)
 {
-    struct DLIST *node;
-    node = (struct DLIST *)malloc(sizeof(struct DLIST));
-    if (!node)
-        return;
-    dlist_iterator_init(*list);
-    while (dlist_iterator_next() != NULL);
-    ((struct DLIST *)*list)->count++;
-    node->count = ((struct DLIST *)*list)->count;
-    node->data = dlist_add_data(p, size);
-    node->next = NULL;
-    dlist_iterator_last()->next = node;
+	struct DLIST *node;
+	node = (struct DLIST *)malloc(sizeof(struct DLIST));
+	if (!node)
+		return;
+	if (!(*list)) {
+		node->count = 1;
+		node->data = dlist_add_data(p, size);
+		node->next = NULL;
+		(*list) = node;
+	} else {
+		dlist_iterator_init(*list);
+		while (dlist_iterator_next() != NULL);
+		((struct DLIST *)*list)->count++;
+		node->count = ((struct DLIST *)*list)->count;
+		node->data = dlist_add_data(p, size);
+		node->next = NULL;
+		dlist_iterator_last()->next = node;
+	}
 }
 
-static struct DLIST *leakcheck_init(void *p, size_t size)
+static struct DLIST *leakcheck_init()
 {
-	_leak_list = dlist_create_list(add_data_fn,
+	_leak_list = dlist_init(add_data_fn,
         remove_data_fn, prepend_node_fn, append_node_fn);
-	if (!_leak_list) {
-		error_print("Cannot create leak list.");
-		return NULL;
-	}
-	_leak_list->data = dlist_add_data(p, size);
 	return _leak_list;
 }
 

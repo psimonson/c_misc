@@ -9,7 +9,8 @@ int main()
 	t1 = malloc(sizeof(int));
 	t2 = malloc(sizeof(int));
 	t3 = malloc(sizeof(int));
-	leakcheck_init(t1, sizeof(int));
+	leakcheck_init();
+	dlist_append_node(&_leak_list, t1, sizeof(int));
 	dlist_append_node(&_leak_list, t2, sizeof(int));
 	dlist_append_node(&_leak_list, t3, sizeof(int));
 	dlist_iterator_init(_leak_list);
