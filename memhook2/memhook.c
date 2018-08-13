@@ -7,8 +7,6 @@
 #include "debug.h"
 
 int (*new_socket)(int, int, int);
-void *(*new_malloc)(size_t);
-void (*new_free)(void *);
 
 int socket(int domain, int type, int protocol)
 {
@@ -22,19 +20,20 @@ int socket(int domain, int type, int protocol)
 	return new_socket(domain, type, protocol);
 }
 
+extern void *__libc_malloc(size_t);
 void *malloc(size_t size)
 {
 	void *p;
 	debug_print("malloc() call intercepted");
-	new_malloc = dlsym(RTLD_NEXT, "malloc");
+/*	new_malloc = dlsym(RTLD_NEXT, "malloc");
 	if (!new_malloc) {
 		error_print("Cannot get next malloc() call.");
 		return NULL;
-	}
+	}*/
 #ifndef NDEBUG
 	debug_print("inside malloc hook");
 #endif
-	p = new_malloc(size);
+	p = __libc_malloc(size);
 	if (!check_mem(p))
 		return NULL;
 #ifndef NDEBUG
@@ -43,6 +42,7 @@ void *malloc(size_t size)
 	return p;
 }
 
+extern void __libc_free(void *);
 void free(void *p)
 {
 #ifndef NDEBUG
@@ -52,12 +52,7 @@ void free(void *p)
 		error_print("Cannot free, block not allocated.");
 		return;
 	}
-	new_free = dlsym(RTLD_NEXT, "free");
-	if (!new_free) {
-		error_print("Cannot find original free() function.");
-		return;
-	}
-	new_free(p);
+	__libc_free(p);
 #ifndef NDEBUG
 	debug_print("memory block (%p) freed.", p);
 #endif
