@@ -16,6 +16,8 @@ time_t setdate(struct tm *tmp, int day, int month, int year)
 	tmp->tm_year = year-1900;
 	tmp->tm_mon = month-1;
 	tmp->tm_mday = day;
+	tmp->tm_hour = 0;
+	tmp->tm_min = 0;
 	return mktime(tmp);
 }
 

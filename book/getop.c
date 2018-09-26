@@ -2,7 +2,7 @@
 
 #define MAXLEN 64
 
-int getop(char *);
+extern int getop(char *);
 
 int main(void)
 {
