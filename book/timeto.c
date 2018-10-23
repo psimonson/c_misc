@@ -6,7 +6,7 @@ int main()
 	int gettime(time_t*, time_t*);
 
 	printf("Days to go from current date to\nRed Dead Redemption"
-		" release is %d days.\n",
+		" 2 release is %d days.\n",
 		gettime(NULL, NULL));
 	return 0;
 }
