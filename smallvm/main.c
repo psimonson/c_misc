@@ -7,17 +7,15 @@ int main(int argc, char **argv)
 	const int dec = 0;
 	int program[] = {
 		/* simple decrement procedure */
-		OP_LOAD, -3,
+		OP_LOAD,
 		OP_CONST, 0,
 		OP_EQ,
-		OP_JMPF, 10,
-		OP_CONST, 0,
+		OP_JMPF, 8,
 		OP_RET,
-		OP_LOAD, -3,
-		OP_CONST, 1,
-		OP_SUB,
-		OP_CALL, dec, 1,
-		OP_RET,
+		OP_STORE,
+		OP_SUB, 1,
+		OP_PRINT,
+		OP_JMP, dec,
 		/* entrypoint */
 		OP_CONST, 6,
 		OP_CALL, dec, 1,
@@ -26,7 +24,7 @@ int main(int argc, char **argv)
 	};
 	VM *vm;
 	
-	vm = VM_create(program, 19, 0);
+	vm = VM_create(program, 14, 0);
 	VM_run(vm);
 	VM_delete(vm);
 	return 0;
